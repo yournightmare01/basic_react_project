@@ -1,4 +1,6 @@
 import { useParams } from 'react-router-dom';
+
+import { useNavigate } from 'react-router';
 import React, { useState, useEffect } from 'react';
 
 import { Product, ProductsService } from '../../../services/productsService';
@@ -18,6 +20,8 @@ const CardDetailPage = () => {
   const [productsData, setProductsData] = useState<Product[]>();
   const { id } = useParams();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getProducts = async () => {
       const response = await ProductsService.getProducts();
@@ -29,6 +33,10 @@ const CardDetailPage = () => {
 
     getProducts();
   }, []);
+
+  const goBackHandler = () => {
+    navigate('/', { replace: true });
+  };
 
   let product;
   let slider;
@@ -52,7 +60,7 @@ const CardDetailPage = () => {
           }}
         >
           {product.images.map((image, i) => (
-            <SwiperSlide>
+            <SwiperSlide key={`${image}${i}`}>
               <img src={image} alt={`slide ${i}`} />
             </SwiperSlide>
           ))}
@@ -89,7 +97,10 @@ const CardDetailPage = () => {
               <p>{product.description}</p>
             </div>
             <div className='cardDetailPage__button-group'>
-              <MinusIcon className='cardDetailPage__button-group--icon' />
+              <MinusIcon
+                onClick={goBackHandler}
+                className='cardDetailPage__button-group--icon'
+              />
 
               <div className='cardDetailPage__button-group--price'>
                 {product.price}
